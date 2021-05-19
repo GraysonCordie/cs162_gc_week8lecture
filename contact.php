@@ -12,6 +12,8 @@
     //5. Don't accept empty fields (allow empty phone if contact preference is email)
     //6. Store contacts from web users to log all previous submissions
         //6.1 Save contact submission to database
+    //7. Create a table in the database to store contact submissions:
+        //7.1 firstName, lastName, email, phone    
 
 ?>
 <?php
@@ -20,7 +22,6 @@
     $lastName = '';
     $email = '';
     $phone = '';
-
     if(isset($_POST['submit'])){
         $firstName = $_POST['first_name'];
         $lastName = $_POST['last_name'];
@@ -29,8 +30,110 @@
     }
 */
 ?>
+<?php
+    //connection params
+    $server = "localhost";
+    $dbuser = "root";
+    $dbpass = "";
+    $db = "company";
+
+    //create database connection
+    $conn = new mysqli($server, $dbuser, $dbpass, $db);
+
+    //check the mysql connection
+    if($conn->connect_error){
+        die("Connection failed" . $conn->connect_error);
+    }
+
+    //retrieve some sql data
+    $sql = "SELECT * FROM employee";
+
+    $result = $conn->query($sql);
+    /*
+        {
+            0:{0:"", 1:"", 2:"", 3:""},
+            1:{0:"", 1:"", 2:"", 3:""},
+            2:{0:"", 1:"", 2:"", 3:""}
+        }
+    */
+    //$result[0][3];
+
+    /* handle retrieved result set
+    if($result->num_rows > 0){
+        while($row = $result->fetch_assoc()){
+            echo $row["id"] . "," . $row["firstName"] . ", " . $row["lastName"] . ";<br />";
+        }
+    }
+    */
+    //echo "connect success!"
+
+    //process $POST data
+    //check if the form has been submitted
+    if(isset($_POST['submit'])){
+        //process data into database
+        //PHP always expects valid form data
+
+        //send valid data to database
+        if($_POST['first_name'] == ""){
+            $stopFormSubmission = true;
+        }
+        if($_POST['last_name'] == ""){
+            $stopFormSubmission = true;
+        }
+
+        if($_POST['last_name'] == ""){
+            $stopFormSubmission = true;
+        }
+
+        //$firstName = $_POST['first_name'];
+        //$lastName = $_POST['last_name'];
+        //$email = $_POST['email'];
+        //$phone = $_POST['phone'];
+
+        //build sql statement for query execution
+        $sql = "INSERT INTO contacts";
+        $sql .= " (firstName, lastName, email, phone)";
+        $sql .= " VALUES (";
+
+        foreach($_POST as $value) :
+            if($value != 'submit') :
+                $sql .= ", ". $value;
+            endif;
+        endforeach;
+
+        $sql .= ")";
+        echo $sql;
+
+        //check if there is a sql error upon query execution
+        //if(!$conn->query($sql)){
+        //    echo $conn->error;
+        //}
+    }
+
+    $conn->close();
+?>
 <script>
     //This is javascript
+    function validate(){
+        var inputs = document.getElementsByTagName('input');
+        //console.log(inputs[0].name);
+
+        //array: inputs = {0:"first_name", 1:"last_name", 2:"email", 3:"phone"}
+        for(var i = 0; i < inputs.length; i++){
+            if(inputs[i].name != "submit"){
+                if(inputs[i].value == inputs[i].defaultValue){
+                    inputs[i].classList.add("invalid");
+                    return false;
+                }
+                else{
+                    inputs[i].classList.remove("invalid");
+                }
+            }
+        }
+
+        return true;
+    }
+
     function clearInput(input){
         //var defaultValue = input.value;
         //cases:
@@ -58,42 +161,44 @@
         var inputs = document.getElementsByTagName('input');
         //console.log(inputs[0].name);
 
+        //array: inputs = {0:"first_name", 1:"last_name", 2:"email", 3:"phone"}
         for(var i = 0; i < inputs.length; i++){
             if(inputs[i].name != "submit"){
                 inputs[i].value = inputs[i].defaultValue;
             }
         }
-        
+
 //        for (var input in inputs){
-//           console.log(input.id.value);
+//            console.log(input.id.value);
 //        }
 
-        //Problem: a bunch of manual code with statically typed code that will need to be modifed 
+        //Problem: a bunch of manual code with statically typed code that will need to be modified
         //with each input change that occurs (adding or removing input fields)
 
         //make a loop and input names into loop to modify input
+        //
     }
 </script>
 
 <?php include('templates/header.php'); ?>
 <div class="col-2">
     <h2 id="page-title">Contact</h2>
-    <form id="myForm" method="POST">
+    <form id="myForm" method="POST" onsubmit="return validate()">
         <div class="input-row">
             <div class="input-label"><label>First Name:</label></div>
-            <div class="input-field"><input id="first_name" type="text" name="first_name" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter First Name" defaultValue="Enter First Name"></div>
+            <div class="input-field"><input type="text" name="first_name" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter First Name" defaultValue="Enter First Name"></div>
         </div>
         <div class="input-row">
             <div class="input-label"><label>Last Name:</label></div>
-            <div class="input-field"><input id="last_name" type="text" name="last_name" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter Last Name" defaultValue="Enter Last Name"></div>
+            <div class="input-field"><input type="text" name="last_name" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter Last Name" defaultValue="Enter Last Name"></div>
         </div>
         <div class="input-row">
             <div class="input-label"><label>Email Address:</label></div>
-            <div class="input-field"><input id="email" type="text" name="email" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter Email Address" defaultValue="Enter Email Address"></div>
+            <div class="input-field"><input type="text" name="email" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter Email Address" defaultValue="Enter Email Address"></div>
         </div>
         <div class="input-row">
             <div class="input-label"><label>Phone Number:</label></div>
-            <div class="input-field"><input id="phone" type="text" name="phone" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter Phone Number" defaultValue="Enter Phone Number"></div>
+            <div class="input-field"><input type="text" name="phone" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter Phone Number" defaultValue="Enter Phone Number"></div>
         </div>
         <div class="input-row">
             <div class="input-fields">
@@ -111,9 +216,9 @@
             -->
             
             <!-- $_POST{first_name=>'', last_name=>'', email=>''....};-->
-            <?php foreach($_POST as $value) : ?>
-                <div><?php echo $value; ?></div>
-            <?php endforeach; ?>
+            <?php //foreach($_POST as $value) : ?>
+                <!--<div><?php //echo $value; ?></div>-->
+            <?php //endforeach; ?>
 
         </div>
     </form>
