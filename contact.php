@@ -48,32 +48,57 @@
             //do nothing
         }
     }
+
+    function resetForm(){
+        //document.getElementById('first_name').value = document.getElementById('first_name').defaultValue;
+        //document.getElementById('last_name').value = document.getElementById('last_name').defaultValue;
+        //document.getElementById('email').value = document.getElementById('email').defaultValue;
+        //document.getElementById('phone').value = document.getElementById('phone').defaultValue;
+
+        var inputs = document.getElementsByTagName('input');
+        //console.log(inputs[0].name);
+
+        for(var i = 0; i < inputs.length; i++){
+            if(inputs[i].name != "submit"){
+                inputs[i].value = inputs[i].defaultValue;
+            }
+        }
+        
+//        for (var input in inputs){
+//           console.log(input.id.value);
+//        }
+
+        //Problem: a bunch of manual code with statically typed code that will need to be modifed 
+        //with each input change that occurs (adding or removing input fields)
+
+        //make a loop and input names into loop to modify input
+    }
 </script>
 
 <?php include('templates/header.php'); ?>
 <div class="col-2">
     <h2 id="page-title">Contact</h2>
-    <form method="POST">
+    <form id="myForm" method="POST">
         <div class="input-row">
             <div class="input-label"><label>First Name:</label></div>
-            <div class="input-field"><input type="text" name="first_name" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter First Name" defaultValue="Enter First Name"></div>
+            <div class="input-field"><input id="first_name" type="text" name="first_name" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter First Name" defaultValue="Enter First Name"></div>
         </div>
         <div class="input-row">
             <div class="input-label"><label>Last Name:</label></div>
-            <div class="input-field"><input type="text" name="last_name" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter Last Name" defaultValue="Enter Last Name"></div>
+            <div class="input-field"><input id="last_name" type="text" name="last_name" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter Last Name" defaultValue="Enter Last Name"></div>
         </div>
         <div class="input-row">
             <div class="input-label"><label>Email Address:</label></div>
-            <div class="input-field"><input type="text" name="email" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter Email Address" defaultValue="Enter Email Address"></div>
+            <div class="input-field"><input id="email" type="text" name="email" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter Email Address" defaultValue="Enter Email Address"></div>
         </div>
         <div class="input-row">
             <div class="input-label"><label>Phone Number:</label></div>
-            <div class="input-field"><input type="text" name="phone" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter Phone Number" defaultValue="Enter Phone Number"></div>
+            <div class="input-field"><input id="phone" type="text" name="phone" onfocus="clearInput(this)" onfocusout="clearInput(this)" value="Enter Phone Number" defaultValue="Enter Phone Number"></div>
         </div>
         <div class="input-row">
             <div class="input-fields">
                 <input type="submit" name="submit" value="submit"></input>
-                <button type="button">Reset</button>
+                <button type="button" onclick="resetForm()">Reset</button>
             </div>
         </div>
         <div>
